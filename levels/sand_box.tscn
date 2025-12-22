@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://bxil4qrlgwi16"]
+
+[ext_resource type="MeshLibrary" uid="uid://dy6pga8qa5vt" path="res://MeshLibraries/SpaceLibrary.tres" id="1_8f3bn"]
+[ext_resource type="PackedScene" uid="uid://dfdff107xp08s" path="res://player/player_dungeon_pov.tscn" id="2_bn0c6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_j3m32"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_8f3bn"]
+sky_material = SubResource("ProceduralSkyMaterial_j3m32")
+
+[sub_resource type="Environment" id="Environment_bn0c6"]
+background_mode = 2
+sky = SubResource("Sky_8f3bn")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8f3bn"]
+albedo_color = Color(0.28485027, 0.28485027, 0.28485027, 1)
+
+[node name="SandBox" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bn0c6")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+use_collision = true
+size = Vector3(35, 1, 30)
+material = SubResource("StandardMaterial3D_8f3bn")
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("1_8f3bn")
+cell_size = Vector3(1, 1, 1)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(65520, 13, 0, 65520, 12, 0, 65520, 11, 0, 65520, 10, 0, 65521, 10, 0, 65522, 10, 0, 65523, 10, 0, 65524, 10, 0, 65525, 10, 0, 65525, 9, 0, 65525, 8, 0, 65525, 7, 0, 65525, 11, 0, 65525, 12, 0, 65526, 12, 0, 65527, 12, 0, 65528, 12, 0, 65524, 8, 0, 65523, 8, 0, 65522, 8, 0, 65521, 8, 0, 65520, 8, 0, 65520, 7, 0, 65520, 6, 0, 65520, 5, 0, 65521, 5, 0, 65522, 5, 0, 65523, 5, 0, 65523, 4, 0, 65523, 3, 0, 65523, 2, 0, 65523, 1, 0, 65523, 0, 0, 65523, 65535, 0, 65523, 65534, 0, 65523, 65533, 0, 65523, 65532, 0, 65523, 65531, 0, 65522, 65531, 0, 65522, 65532, 0, 65522, 65533, 0, 65524, 65533, 0, 65524, 65532, 0, 65524, 65531, 0, 65521, 65532, 0, 65520, 65532, 0, 65520, 65531, 0, 65520, 65530, 0, 65520, 65529, 0, 65522, 1, 0, 65521, 1, 0, 65520, 1, 0, 65520, 0, 0, 65520, 65535, 0, 65520, 65534, 0, 65520, 2, 0, 65520, 3, 0, 65525, 65532, 0, 65526, 65532, 0, 65526, 65531, 0, 65527, 65531, 0, 65527, 65532, 0, 65528, 65532, 0, 65528, 65531, 0, 65528, 65533, 0, 65527, 65533, 0, 65526, 65533, 0, 65529, 65532, 0, 65530, 65531, 0, 65530, 65532, 0, 65530, 65533, 0, 65531, 65533, 0, 65531, 65532, 0, 65531, 65531, 0, 65527, 65534, 0, 65527, 65535, 0, 65527, 0, 0, 65527, 1, 0, 65527, 2, 0, 65527, 3, 0, 65527, 4, 0, 65527, 5, 0, 65527, 6, 0, 65526, 6, 0, 65525, 6, 0, 65528, 6, 0, 65529, 6, 0, 65530, 6, 0, 65530, 7, 0, 65530, 8, 0, 65530, 9, 0, 65530, 10, 0, 65530, 11, 0, 65530, 12, 0, 65529, 12, 0)
+}
+
+[node name="PlayerDungeonPOV" parent="." instance=ExtResource("2_bn0c6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 0.5, 13.5)
+
+[editable path="PlayerDungeonPOV"]

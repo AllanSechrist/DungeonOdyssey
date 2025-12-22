@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfdff107xp08s"]
+
+[ext_resource type="Script" uid="uid://ba7tcmgd32be2" path="res://player/player_dungeon_pov.gd" id="1_6a6ny"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ue5f7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ue5f7"]
+
+[node name="PlayerDungeonPOV" type="CharacterBody3D"]
+script = ExtResource("1_6a6ny")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_ue5f7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_ue5f7")
+
+[node name="Camera3D" type="Camera3D" parent="CollisionShape3D"]
+current = true
