@@ -1,33 +1,84 @@
 extends CharacterBody3D
 
-
-const SPEED = 5.0
-const TURN_ANGLE := PI / 2
-
+@export var step_size := 1.0
+@export var step_time := 0.12
 @export var turn_time := 0.2
 
+const TURN_ANGLE := PI / 2
+
+var moving := false
+var queued_dir := Vector3.ZERO
+var move_tween: Tween
 var turning := false
 var facing := 0
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-
+	if not moving:
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+		else:
+			velocity.y = 0.0
+		move_and_slide()
 	rotate_player()
-	var direction := get_movement_direction()
-	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		
+	var dir := get_grid_input_dir()
+	if dir != Vector3.ZERO:
+		try_step(dir)
+		
+func get_grid_input_dir() -> Vector3:
+	var x := int(Input.is_action_just_pressed("move_right")) - int(Input.is_action_just_pressed("move_left"))
+	var z := int(Input.is_action_just_pressed("move_backward")) - int(Input.is_action_just_pressed("move_forward"))
+
+	if x == 0 and z == 0:
+		return Vector3.ZERO
+		
+	if abs(x) > abs(z):
+		z = 0
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-	move_and_slide()
+		x = 0
+
+	var local := Vector3(x, 0, z).normalized()
+	return (transform.basis * local).normalized()
 	
-func get_movement_direction() -> Vector3:
-	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
-	var input_vector := Vector3(input_dir.x, 0, input_dir.y).normalized()
-	return transform.basis * input_vector
+func try_step(dir: Vector3) -> void:
+	if moving:
+		queued_dir = dir
+		return
+		
+	dir.y = 0.0
+	if dir == Vector3.ZERO:
+		return
+		
+	var start := global_position
+	var target := start + dir * step_size
+	target.y = start.y
+	
+	var motion := (target - start)
+	if test_move(global_transform, motion):
+		return
+		
+	start_step_to(target)
+	
+func start_step_to(target: Vector3) -> void:
+	moving = true
+	queued_dir = Vector3.ZERO
+	
+	if move_tween and move_tween.is_valid():
+		move_tween.kill()
+		
+	var start := global_position
+	target.y = start.y
+	
+	move_tween = create_tween()
+	move_tween.tween_property(self, "global_position", target, step_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	move_tween.finished.connect(
+		func():
+			moving = false
+			if queued_dir != Vector3.ZERO:
+				var next := queued_dir
+				queued_dir = Vector3.ZERO
+				try_step(next)
+	)
 	
 func rotate_player() -> void:
 	if turning:
